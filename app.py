@@ -48,41 +48,53 @@ def manvalve():
         return REQUEST_RESPONSE['JSON_ERROR'], 406
 
 
-@app.route('/api/manprog')
+@app.route('/api/manprog', methods=['POST'])
 def manprog():
-    return API_RESPONSE_TEST
+    json_data = request.data
+    json_data = json.loads(json_data)
+    send_ok_response = False
+    if json_data['prog'] in "ABCDEF" and int(json_data['action']) <= 1:
+        send_ok_response = True
+    print_s(json_data['action'])
+    if (send_ok_response):
+        uuid = json_data['uuid']
+        json_data["id"] = 1
+        json_data.pop('uuid')
+        msg = json.dumps(json_data)
+        mqtt.publish(uuid+'/manprog/app', msg, 0, False)
+        return REQUEST_RESPONSE['OK'], 200
+    else:
+        return REQUEST_RESPONSE['JSON_ERROR'], 406
 
 
-@app.route('/api/general')
+@app.route('/api/general', methods=['POST'])
 def general():
     return API_RESPONSE_TEST
 
 
-@app.route('/api/stop')
+@app.route('/api/stop', methods=['POST'])
 def stop():
     return API_RESPONSE_TEST
 
 
 @app.route('/api/program', methods=['POST'])
 def program():
-    if request.method == 'POST':
-        try:
-            json_data = request.json
-            json_data = request.json
-            json_datason_data = request.json
-            uuid = str(json_data['uuid'])
-            prog = str(json_data['prog']).upper()
-            water = int(json_data['water'])
-            if prog in "ABCDEF" and water > 0 and water <= 400 and len(uuid) < 40:
-                msg = "{\"id\":1,\"prog\":\"" + \
-                    str(prog) + "\",\"water\":" + str(water) + "}"
-                mqtt.publish(uuid+'/program/app',
-                             msg, 0, False)
-                return REQUEST_RESPONSE['OK'], 200
-            else:
-                return REQUEST_RESPONSE['NOP']
-        except:
-            return REQUEST_RESPONSE['PUBLISH_ERROR']
+    json_data = request.json
+    uuid = str(json_data['uuid'])
+    prog = str(json_data['prog']).upper()
+    print_s (uuid, prog)
+    if "water" in json_data:
+        water = int(json_data['water'])
+        if water > 0 and water <= 400:
+            pass
+        else:
+            pass  
+    if prog in "ABCDEF":
+        mqtt.publish(uuid+'/program/app',
+                    "ok", 0, False)
+        return REQUEST_RESPONSE['OK'], 200
+    else:
+        return REQUEST_RESPONSE['PUBLISH_ERROR'],407
 
 
 if __name__ == '__main__':
