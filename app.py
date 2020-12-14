@@ -1,5 +1,4 @@
-from flask import Flask
-from flask import request
+from flask import Flask, render_template, request
 from flask_mqtt import Mqtt
 from credential import *
 from tools import *
@@ -15,10 +14,10 @@ app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
 
 
-@app.route('/')
+@app.route('/test')
 def test_api():
-    print("hello")
-    return API_RESPONSE_TEST
+    # print("hello")
+    return render_template('index.html')
 
 
 @app.route('/api/manvalve', methods=['POST'])
@@ -69,12 +68,76 @@ def manprog():
 
 @app.route('/api/general', methods=['POST'])
 def general():
-    return API_RESPONSE_TEST
+    json_data = request.data
+    json_data = json.loads(json_data)
+    uuid = ""
+    try:
+        uuid = str(json_data['uuid'])
+    except:
+        return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
+    # implement a filter to check if msg is ok:
+    send_ok_response = True
+    if "pump_delay" in json_data:
+        pump_delay = int(json_data["pump_delay"])
+        if pump_delay < -120 or pump_delay > 120:
+            send_ok_response = False
+    if "valve_delay" in json_data:
+        valve_delay = int(json_data["valve_delay"])
+        if valve_delay < 0 or valve_delay > 120:
+            send_ok_response = False
+    if "pause" in json_data:
+        pause = int(json_data["pause"])
+        if (pause > 7 or pause < 0):
+            send_ok_response = False
+    if "fertirrigations" in json_data:
+        fertirrigations = json_data["fertirrigations"]
+        if (len(fertirrigations) != 32):
+            send_ok_response = False
+    if "fertirrigation_number" in json_data:
+        fertirrigation_number =int(json_data["fertirrigation_number"])
+        if (fertirrigation_number > 4):
+            send_ok_response = False
+    if "date" in json_data:
+        date = json_data["date"]
+        if (len(date) != 16):
+            send_ok_response = False
+    if "pump_ids" in json_data:
+        pump_ids = json_data["pump_ids"]
+        if (len(pump_ids) != 16):
+            send_ok_response = False
+    if "master_pump_associations" in json_data:
+        master_pump_associations = json_data["master_pump_associations"]
+        if (len(master_pump_associations) != 32):
+            send_ok_response = False
+    if "master_associations" in json_data:
+        master_associations = json_data["master_associations"]
+        if (len(master_associations) != 128):
+            send_ok_response = False
+    
+    if send_ok_response:
+        json_data["id"] = 1
+        json_data.pop('uuid')
+        msg = json.dumps(json_data)
+        mqtt.publish(uuid+'/general/app', msg, 0, False)
+        return REQUEST_RESPONSE['OK'], 200
+    else:
+        return REQUEST_RESPONSE['JSON_ERROR'], 406
 
 
 @app.route('/api/stop', methods=['POST'])
 def stop():
-    return API_RESPONSE_TEST
+    json_data = request.data
+    json_data = json.loads(json_data)
+    uuid = ""
+    try:
+        uuid = str(json_data['uuid'])
+    except:
+        return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
+    json_data["id"] = 1
+    json_data.pop('uuid')
+    msg = json.dumps(json_data)
+    mqtt.publish(uuid+'/stop/app', msg, 0, False)
+    return REQUEST_RESPONSE['OK'], 200
 
 
 @app.route('/api/program', methods=['POST'])
@@ -91,7 +154,6 @@ def program():
     except:
         return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
     # i check if the parameters are ok:
-    print_s("________________________")
     send_ok_response = True
     if prog not in "ABCDEF":
         send_ok_response = False
