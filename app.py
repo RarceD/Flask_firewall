@@ -79,22 +79,66 @@ def stop():
 
 @app.route('/api/program', methods=['POST'])
 def program():
-    json_data = request.json
-    uuid = str(json_data['uuid'])
-    prog = str(json_data['prog']).upper()
-    print_s (uuid, prog)
+    # Parse the data:
+    json_data = request.data
+    json_data = json.loads(json_data)
+    # Mandatory msg information:
+    uuid = ""
+    prog = ""
+    try:
+        uuid = str(json_data['uuid'])
+        prog = str(json_data['prog']).upper()
+    except:
+        return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
+    # i check if the parameters are ok:
+    print_s("________________________")
+    send_ok_response = True
+    if prog not in "ABCDEF":
+        send_ok_response = False
     if "water" in json_data:
         water = int(json_data['water'])
-        if water > 0 and water <= 400:
-            pass
-        else:
-            pass  
-    if prog in "ABCDEF":
+        if water < 0 and water > 400:
+            send_ok_response = False
+    if "starts" in json_data:
+        starts = json_data['starts']
+        if len(starts) > 6:
+            send_ok_response = False
+        for s in starts:
+            if len(s) < 5:
+                send_ok_response = False
+    if "interval" in json_data:
+        interval = int(json_data["interval"])
+        if interval > 7:
+            send_ok_response = False
+    if "interval_init" in json_data:
+        interval_init = int(json_data["interval_init"])
+        if interval_init > 7:
+            send_ok_response = False
+    if "week_day" in json_data:
+        week_day = json_data['week_day']
+        if len(week_day) > 7:
+            send_ok_response = False
+    if "valves" in json_data["valves"]:
+        valves = json_data["valves"]
+        for v in valves:
+            if int(v["v"]) > 128:
+                send_ok_response = False
+            if len(v["time"]) > 5:
+                send_ok_response = False
+    if "from" and "to" in json_data:
+        from_data = json_data['from']
+        to_data = json_data['to']
+        if len(from_data) > 5 or len(to_data) > 5:
+            send_ok_response = False
+    if (send_ok_response):
+        json_data["id"] = 1
+        json_data.pop('uuid')
+        msg = json.dumps(json_data)
         mqtt.publish(uuid+'/program/app',
-                    "ok", 0, False)
+                     msg, 0, False)
         return REQUEST_RESPONSE['OK'], 200
     else:
-        return REQUEST_RESPONSE['PUBLISH_ERROR'],407
+        return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
 
 
 if __name__ == '__main__':
