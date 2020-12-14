@@ -14,9 +14,8 @@ app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
 
 
-@app.route('/test')
+@app.route('/')
 def test_api():
-    # print("hello")
     return render_template('index.html')
 
 
@@ -180,7 +179,7 @@ def program():
         week_day = json_data['week_day']
         if len(week_day) > 7:
             send_ok_response = False
-    if "valves" in json_data["valves"]:
+    if "valves" in json_data:
         valves = json_data["valves"]
         for v in valves:
             if int(v["v"]) > 128:
