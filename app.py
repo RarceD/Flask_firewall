@@ -93,7 +93,7 @@ def general():
         if (len(fertirrigations) != 32):
             send_ok_response = False
     if "fertirrigation_number" in json_data:
-        fertirrigation_number =int(json_data["fertirrigation_number"])
+        fertirrigation_number = int(json_data["fertirrigation_number"])
         if (fertirrigation_number > 4):
             send_ok_response = False
     if "date" in json_data:
@@ -112,7 +112,7 @@ def general():
         master_associations = json_data["master_associations"]
         if (len(master_associations) != 128):
             send_ok_response = False
-    
+
     if send_ok_response:
         json_data["id"] = 1
         json_data.pop('uuid')
@@ -158,7 +158,7 @@ def program():
         send_ok_response = False
     if "water" in json_data:
         water = int(json_data['water'])
-        if water < 0 and water > 400:
+        if water < 0 or water > 400:
             send_ok_response = False
     if "starts" in json_data:
         starts = json_data['starts']
@@ -203,4 +203,5 @@ def program():
 
 
 if __name__ == '__main__':
-    app.run()
+    # app.run(host="0.0.0.0", port=5000)
+    app.run(port=5000)
