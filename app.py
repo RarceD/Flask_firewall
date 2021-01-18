@@ -13,6 +13,9 @@ app.config['MQTT_PASSWORD'] = MQTT_PASS
 app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
 
+# In every post I check if they have a valid key to use them.
+# Create a dict with all the available uuid for each client 
+
 
 @app.route('/')
 def test_api():
