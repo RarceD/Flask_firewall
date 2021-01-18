@@ -26,7 +26,7 @@ def test_api():
     return render_template('index.html')
     
 @app.route('/guide')
-def test_api():
+def documentation():
     return render_template('guide.html')
 
 
