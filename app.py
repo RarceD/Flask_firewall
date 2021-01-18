@@ -24,6 +24,10 @@ print(data_keys)
 @app.route('/')
 def test_api():
     return render_template('index.html')
+    
+@app.route('/guide')
+def test_api():
+    return render_template('guide.html')
 
 
 @app.route('/api/manvalve', methods=['POST'])

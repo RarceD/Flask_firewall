@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Documentation API</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <script src="../static/js/main.js"></script>
+    <script src="https://unpkg.com/@ionic/core@0.0.2-20/dist/ionic.js"></script>
+
+    <style>
+        :root {
+          --ion-safe-area-top: 20px;
+          --ion-safe-area-bottom: 22px;
+        }
+    
+        header {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.05em;
+          margin-bottom: 1.25em;
+          text-transform: uppercase;
+        }
+    
+        section {
+          margin-top: 1em;
+          margin-bottom: 2.5em;
+        }
+
+        section:not(.full-width),
+        .full-width > header {
+          padding: 0 10px;
+        }
+      </style>
+  </head>
+  <body>
+    <ion-app>
+      <ion-header translucent >
+        <ion-navbar >
+          <ion-title class="ion-text-center">API documentation</ion-title>
+        </ion-navbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-card>
+                    <ion-card-header>
+
+
+                            The diferent options to interact with the controllers:
+ 
+                        
+                    </ion-card-header>
+                    <ion-card-content>
+                    <ion-item>
+                      <ion-label >Change program request </ion-label>
+                      <ion-button onClick="change_request(0)" color="dark">Example</ion-button>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label >Manual valve request </ion-label>
+                      <ion-button onClick="change_request(1)" >Example</ion-button>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label >General action </ion-label>
+                      <ion-button onClick="change_request(2)" color="dark">Example</ion-button>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label >Stop action </ion-label>
+                      <ion-button onClick="change_request(3)" >Example</ion-button>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label >Change program request  </ion-label>
+                      <ion-button onClick="change_request(4)" color="dark">Example</ion-button>
+                    </ion-item>
+                    
+                </ion-card-content>
+              </ion-card>
+              <ion-card>
+                <ion-card-header>
+                    Aditional information:
+                </ion-card-header>
+                <ion-card-content>
+                    <ion-list>
+                        <ion-radio-group value="a">
+                          <ion-list-header>
+                            <ion-label>All messages must:</ion-label>
+                          </ion-list-header>
+                      
+                          <ion-item>
+                            <ion-label>The "uuid" and "client" param is mandatory</ion-label>
+                            <ion-radio slot="start" color= "dark" value="a"></ion-radio>
+                          </ion-item>
+                      
+                          <ion-item>
+                            <ion-label>There are 6 programs: "A", "B", "C", "D", "E", "F"</ion-label>
+                            <ion-radio slot="start" value="a"></ion-radio>
+                          </ion-item>
+                      
+                          <ion-item>
+                            <ion-label>There are 6 starts for each programs</ion-label>
+                            <ion-radio slot="start" color= "dark" value="a"></ion-radio>
+                          </ion-item>
+                          <ion-item>
+                            <ion-label>The max time between requests is 1 second</ion-label>
+                            <ion-radio slot="start" value="a"></ion-radio>
+                          </ion-item>
+                          <ion-item>
+                            <ion-label>If some param is out of range the server notified why</ion-label>
+                            <ion-radio slot="start"  color= "dark"value="a"></ion-radio>
+                          </ion-item>
+                        </ion-radio-group>
+                      </ion-list>
+                </ion-card-content>
+            </ion-card>
+            </ion-col>
+            <ion-col> 
+                <ion-card>
+                    <ion-card-header>
+                      Example of post method
+                    </ion-card-header>
+                    <ion-card-content>
+                        <ion-item>
+                            <pre id="json_example"></pre>
+                        </ion-item>
+                    </ion-card-content>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-content>
+    </ion-app>
+  </body>
+</html>
