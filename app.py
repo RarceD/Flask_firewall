@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request
 from flask_mqtt import Mqtt
 from credential import *
+from apikey import Apikey
 from tools import *
 import json
 
-
+# Inicialize the mqtt class and set the credentials for the correct connection:
 app = Flask(__name__)
 app.config['MQTT_BROKER_URL'] = MQTT_BROKER
 app.config['MQTT_BROKER_PORT'] = MQTT_PORT
@@ -14,7 +15,10 @@ app.config['MQTT_REFRESH_TIME'] = 1.0  # refresh time in seconds
 mqtt = Mqtt(app)
 
 # In every post I check if they have a valid key to use them.
-# Create a dict with all the available uuid for each client 
+# Create a AssociationUuidClient data type and check  all the available uuid for each client
+data_keys = Apikey()
+data_keys.load_asssociation('data/uuid_client.json')
+print(data_keys)
 
 
 @app.route('/')

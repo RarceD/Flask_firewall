@@ -57,17 +57,22 @@ class Apikey (object):
                     return False
         else:
             return False
+    def __repr__(self):
+        return_data = ""
+        for d in self.association_uuid_client:
+            return_data+=d.client + " -> "
+            for u in d.uuid:
+                return_data+= u + ', '
+            return_data += '\n'
+        return (return_data)
 
+    
 
 def test_api_key():
     data_keys = Apikey()
     data_keys.load_asssociation('data/uuid_client.json')
-    for d in data_keys.association_uuid_client:
-        print(d)
     random_client = ["hola", "acua_client"]
     random_uuid = "Xxfs9g510gvBXP7YGjRGMg"
-    for c in random_client:
-        print(data_keys.check_if_associated(uuid=random_uuid, client=c))
-
+    print(data_keys)
 
 # test_api_key()
