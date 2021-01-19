@@ -17,7 +17,7 @@ mqtt = Mqtt(app)
 # In every post I check if they have a valid key to use them.
 # Create a AssociationUuidClient data type and check  all the available uuid for each client
 data_keys = Apikey()
-data_keys.load_asssociation('data/uuid_client.json')
+data_keys.load_asssociation('data/uuid_client_real.json')
 print(data_keys)
 
 
@@ -38,8 +38,14 @@ def manvalve():
     # print_s(json_data)
     json_data = json.loads(json_data)
     send_ok_response = True
-    uuid = json_data['uuid']
-    client = json_data['client']
+    uuid = ""
+    client = ""
+    try:
+        uuid = json_data['uuid']
+        client = json_data['client']
+    except:
+        return REQUEST_RESPONSE['JSON_ERROR'], 406
+
     if (data_keys.check_if_associated(uuid=uuid, client=client)):
         for valve in json_data['valves']:
             time = str(valve['time'])
@@ -68,8 +74,13 @@ def manprog():
     json_data = request.data
     json_data = json.loads(json_data)
     send_ok_response = False
-    uuid = json_data['uuid']
-    client = json_data['client']
+    uuid = ""
+    client = ""
+    try:
+        uuid = json_data['uuid']
+        client = json_data['client']
+    except:
+        return REQUEST_RESPONSE['JSON_ERROR'], 406
     if (data_keys.check_if_associated(uuid=uuid, client=client)):
         if json_data['prog'] in "ABCDEF" and int(json_data['action']) <= 1:
             send_ok_response = True
@@ -241,5 +252,4 @@ def program():
 
 
 if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port=5000)
-    app.run(port=5000)
+    app.run(host="0.0.0.0", port=5000)

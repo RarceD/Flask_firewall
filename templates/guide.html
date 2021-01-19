@@ -12,7 +12,6 @@
     <script src="https://unpkg.com/@ionic/core@0.0.2-20/dist/ionic.js"></script>
     <script src="../static/js/main.js"></script>
 
-
   </head>
   <body>
     <ion-app>
@@ -21,7 +20,6 @@
           <ion-title class="ion-text-center">API documentation v0.1:</ion-title>
         </ion-navbar>
       </ion-header>
-
       <ion-content class="ion-padding">
         <ion-grid>
           <ion-row>
@@ -69,7 +67,7 @@
                           </ion-list-header>
                       
                           <ion-item>
-                            <ion-label>The "uuid" and "client" param is mandatory</ion-label>
+                            <ion-label>The "uuid" and "client" parameters are mandatory</ion-label>
                             <ion-radio slot="start" color= "dark" value="a"></ion-radio>
                           </ion-item>
                       
@@ -83,11 +81,11 @@
                             <ion-radio slot="start" color= "dark" value="a"></ion-radio>
                           </ion-item>
                           <ion-item>
-                            <ion-label>The max time between requests is 1 second</ion-label>
+                            <ion-label>The maximum time between requests is 10 second</ion-label>
                             <ion-radio slot="start" value="a"></ion-radio>
                           </ion-item>
                           <ion-item>
-                            <ion-label>If some param is out of range the server notified why</ion-label>
+                            <ion-label>If some parameter is out of range the server will refuse it</ion-label>
                             <ion-radio slot="start"  color= "dark"value="a"></ion-radio>
                           </ion-item>
                         </ion-radio-group>
@@ -99,7 +97,7 @@
                 <ion-card>
                     <ion-card-header>
                       <b>
-                        Example of post method
+                        Example of post method:
                       </b>
                     </ion-card-header>
                     <ion-card-content>

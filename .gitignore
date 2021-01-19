@@ -1,5 +1,6 @@
 # Credentials
 credential.py
+data/uuid_client_real.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
