@@ -14,6 +14,13 @@ var json_options = {
   PROGRAM: 4,
   AA: 5,
 };
+const url_options = [
+  "/api/manprog",
+  "/api/manvalve",
+  "/api/general",
+  "/api/stop",
+  "/api/program",
+];
 // When the dom update I generate the first data
 window.onload = function () {
   document.getElementById("json_example").textContent = JSON.stringify(
@@ -22,8 +29,8 @@ window.onload = function () {
     2
   );
   console.log("__init__");
+  document.getElementById("api_url").textContent =url_options[0];
 };
-
 
 function change_request(item) {
   data = {};
@@ -119,4 +126,5 @@ function change_request(item) {
     undefined,
     2
   );
+  document.getElementById("api_url").textContent = url_options[item];
 }
