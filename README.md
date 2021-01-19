@@ -11,7 +11,7 @@ sudo pip install flask-mqtt
 
 ## Functionallity:
     [x] Received a post with a fix json format and a key.
-    [ ] Check if the user with this key is able to interact with this uuid.
+    [X] Check if the user with this key is able to interact with this uuid.
     [ ] Sqlite python, for storing this associated information. 
     [x] Filter and discard wrong parameters and messages.
     [x] Inform of wrong request in order to re post it well.
