@@ -47,13 +47,13 @@ class Apikey (object):
         # This is not very eficient but for now the number of clients is not very high:
         for c in self.association_uuid_client:
             if client in c.client:
-                print("The client exist")
+                # print("The client exist")
                 for u in c.uuid:
                     if uuid == u:
-                        print("Match the uuid")
+                        # print("Match the uuid")
                         return True
                 else:
-                    print("This client does not have this uuid")
+                    # print("This client does not have this uuid")
                     return False
         else:
             return False

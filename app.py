@@ -18,12 +18,28 @@ mqtt = Mqtt(app)
 # Create a AssociationUuidClient data type and check  all the available uuid for each client
 data_keys = Apikey()
 data_keys.load_asssociation('data/uuid_client_real.json')
-print(data_keys)
+# print(data_keys)
 
 
-@app.route('/')
-def test_api():
-    return render_template('index.html')
+# @app.route('/')
+# def test_api():
+#     return render_template('index.html')
+
+@mqtt.on_connect()
+def handle_connect(client, userdata, flags, rc):
+    mqtt.subscribe('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/test')
+    mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/2',
+                 'mqtt server start!!')
+
+
+@mqtt.on_message()
+def handle_mqtt_message(client, userdata, message):
+    data = dict(
+        topic=message.topic,
+        payload=message.payload.decode()
+    )
+    mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/on_message', 'mqtt')
+    # print_s(data)
 
 
 @app.route('/guide')
@@ -85,7 +101,7 @@ def manprog():
     if (data_keys.check_if_associated(uuid=uuid, client=client)):
         if json_data['prog'] in "ABCDEF" and int(json_data['action']) <= 1:
             send_ok_response = True
-        print_s(json_data['action'])
+        # print_s(json_data['action'])
         if (send_ok_response):
             json_data["id"] = 1
             json_data.pop('uuid')
@@ -258,3 +274,4 @@ def program():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
+    mqtt.init_app(app)
