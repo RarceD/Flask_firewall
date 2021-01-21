@@ -59,6 +59,7 @@ def manvalve():
                 send_ok_response = False
         if (send_ok_response):
             json_data["id"] = 1
+            json_data.pop('client')
             json_data.pop('uuid')
             msg = json.dumps(json_data)
             mqtt.publish(uuid+'/manvalve/app', msg, 0, False)
@@ -88,6 +89,7 @@ def manprog():
         if (send_ok_response):
             json_data["id"] = 1
             json_data.pop('uuid')
+            json_data.pop('client')
             msg = json.dumps(json_data)
             mqtt.publish(uuid+'/manprog/app', msg, 0, False)
             return REQUEST_RESPONSE['OK'], 200
@@ -151,6 +153,7 @@ def general():
 
         if send_ok_response:
             json_data["id"] = 1
+            json_data.pop('client')
             json_data.pop('uuid')
             msg = json.dumps(json_data)
             mqtt.publish(uuid+'/general/app', msg, 0, False)
@@ -175,6 +178,7 @@ def stop():
     if (data_keys.check_if_associated(uuid=uuid, client=client)):
         json_data["id"] = 1
         json_data.pop('uuid')
+        json_data.pop('client')
         msg = json.dumps(json_data)
         mqtt.publish(uuid+'/stop/app', msg, 0, False)
         return REQUEST_RESPONSE['OK'], 200
@@ -241,6 +245,7 @@ def program():
         if (send_ok_response):
             json_data["id"] = 1
             json_data.pop('uuid')
+            json_data.pop('client')
             msg = json.dumps(json_data)
             mqtt.publish(uuid+'/program/app',
                          msg, 0, False)
