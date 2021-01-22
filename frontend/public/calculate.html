@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <title>IrrigAPI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Raleway"
+  />
+  <script>
+    const http = new XMLHttpRequest();
+    http.open("GET", "http://localhost:5000/cal_etc");
+    http.send();
+    http.onload = () => console.log(http.responseText);
+  </script>
+  <style>
+    :root {
+      --base-color: rgba(255, 255, 255, 1);
+      --hover-color: rgba(220, 120, 150, 1);
+    }
+    body {
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      font-family: "Anton", sans-serif;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    }
+    .horizontal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 400px;
+      height: 120px;
+      margin: 20px;
+      border: 10px solid var(--base-color);
+      font-size: 4rem;
+      cursor: pointer;
+    }
+    .horizontal > .text {
+      position: relative;
+      color: transparent;
+      background-image: linear-gradient(
+        90deg,
+        var(--hover-color) 0%,
+        var(--hover-color) 50%,
+        var(--base-color) 50%,
+        var(--base-color) 100%
+      );
+      background-repeat: repeat;
+      background-size: 200%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      transition: background-position 300ms;
+    }
+    .horizontal::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--base-color);
+      transform-origin: 100% 0;
+      transform: scale3d(0, 1, 1);
+      transition: transform 300ms;
+    }
+    .horizontal:hover .text {
+      background-position: 0 0;
+    }
+    .horizontal:hover::before {
+      transform-origin: 0 0;
+      transform: scale3d(1, 1, 1);
+    }
+
+    .vertical {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 400px;
+      height: 120px;
+      margin: 20px;
+      border: 10px solid var(--base-color);
+      font-size: 4rem;
+      cursor: pointer;
+    }
+    .vertical > .text {
+      position: relative;
+      color: transparent;
+      background-image: linear-gradient(
+        0deg,
+        var(--hover-color) 0%,
+        var(--hover-color) 50%,
+        var(--base-color) 50%,
+        var(--base-color) 100%
+      );
+      background-repeat: repeat;
+      background-size: 100% 200%;
+      background-position: 0 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      transition: background-position 300ms;
+    }
+    .vertical::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--base-color);
+      transform-origin: 0 0;
+      transform: scale3d(1, 0, 1);
+      transition: transform 300ms;
+    }
+    .vertical:hover .text {
+      background-position: 0 100%;
+    }
+    .vertical:hover::before {
+      transform-origin: 0 100%;
+      transform: scale3d(1, 1, 1);
+    }
+  </style>
+  <body>
+    <a class="horizontal"><span class="text">ETC</span></a>
+
+    <a class="vertical"><span class="text"></span></a>
+  </body>
+</html>

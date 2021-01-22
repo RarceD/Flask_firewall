@@ -24,6 +24,50 @@
       background-position: center;
       background-size: cover;
     }
+
+    #btn {
+      background: #222;
+      height: 30px;
+      min-width: 150px;
+      border: none;
+      border-radius: 10px;
+      color: #eee;
+      font-size: 20px;
+      font-family: "Montserrat";
+      position: relative;
+      transition: 1s;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding-top: 5px;
+    }
+
+    #btn #circle {
+      width: 5px;
+      height: 5px;
+      background: transparent;
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      overflow: hidden;
+      transition: 500ms;
+    }
+
+    #btn:hover {
+      background: transparent;
+    }
+
+    #btn:hover #circle {
+      height: 50px;
+      width: 150px;
+      left: 0;
+      border-radius: 0;
+      border-bottom: 2px solid #eee;
+    }
+    a { text-decoration: none; }
   </style>
   <body>
     <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
@@ -31,6 +75,19 @@
         <h1 class="w3-jumbo w3-animate-top">API v1.0</h1>
         <hr class="w3-border-black" style="margin: auto; width: 40%" />
         <p class="w3-large w3-center">On 2021</p>
+        <!-- <a href="https://www.w3schools.com/howto/howto_css_sidenav_buttons.asp"> -->
+          <a id="btn" href="http://81.46.227.112:5000/guide">
+            <span class="noselect">Documentation</span>
+            <div id="circle"></div>
+          </a>
+        <!-- </a> -->
+          <div style="margin: 10px"></div>
+          
+        <a id="btn"  href="/calculate">
+          <span class="noselect">Calculate</span>
+          <div id="circle"></div>
+        </a>
+
       </div>
     </div>
   </body>

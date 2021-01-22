@@ -46,6 +46,9 @@ def handle_mqtt_message(client, userdata, message):
 def documentation():
     return render_template('guide.html')
 
+@app.route('/cal_etc')
+def cal_etc():
+    return '12.2'
 
 @app.route('/api/manvalve', methods=['POST'])
 def manvalve():
