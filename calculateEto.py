@@ -15,39 +15,44 @@ class calculateEto(object):
     """
 
     def __init__(self):
-        self.t_med = 15.0
-        self.t_medprevious = 0.0
-        self.t_max = 20.0
-        self.t_min = 10.0
-        self.rad_net = 0.0
-        self.rad_net_short = 0.0
-        self.rad_net_long = 0.0
-        self.rad_net_wave_no_cloud = 0.0
-        self.albedo = 0.23
-        self.rad_solar = 0.0  # obtein from api
-        self.rad_solar_0 = 0.1
-        self.height = 800.0  # in meters
-        self.hum_max = 0.0
-        self.hum_min = 0.0
-        self.hum_med = 0.0
-        self.c_p = 1.102*10**(-3)
-        self.height = 860.0  # in meters
+        self.t_med = 15.11
+        self.t_medprevious = 14.8
+        self.t_max = 22.73
+        self.t_min = 8.35
+        self.hum_max = 53.4
+        self.hum_min = 25.05
+        self.hum_med = 41.1
+        self.rad_solar = 21.37  # obtein from api
+        self.wind_speed = 3.54/3.6  # in km/hour
 
+        # Constants:
+        self.albedo = 0.23
         self.presure_atm = 1020.0
         self.latitude = 42.34
         self.days = self.get_julian(datetime.datetime.now())
-        self.wind_speed = 8  # in km/hour
+        self.c_p = 1.102*10**(-3)
+
+        self.rad_net = 0.0
+        self.rad_net_short = 0.0
+        self.rad_net_long = 0.0
+        self.rad_solar_0 = 0.0
+        self.height = 698.0  # in meters
 
     def __repr__(self):
         data = ""
-        data += "Tmed - Tmax - Tmin: " + \
+        data += " Tmed - Tmax - Tmin: " + \
             str(self.t_med)+" ! " + str(self.t_max) + \
             " ! " + str(self.t_min)+"\n"
-        data += "Hmed - Hmax - Hmin: " + \
+        data += " Hmed - Hmax - Hmin: " + \
             str(self.hum_med)+" ! " + str(self.hum_max) + \
             " ! " + str(self.hum_min)+"\n"
         data += "wind speed: " + str(self.wind_speed)+"\n"
         data += "Height: " + str(self.height)+"\n"
+        data += " Solar Radiation: " + str(self.rad_solar) + "\n"
+        data += " Solar Radiation_0: " + str(self.rad_solar_0) + "\n"
+        data += " Solar Radiation LONG: " + str(self.rad_net_long) + "\n"
+        data += " Solar Radiation SHORT: " + str(self.rad_net_short) + "\n"
+        data += " Solar Radiation NETA: " + str(self.rad_net) + "\n"
         return data
 
     def get_data(self):
@@ -56,15 +61,16 @@ class calculateEto(object):
 
     def calc_eto(self):
         # get rad solar from api:
-        self.rad_solar = self.get_rad_solar()
+        #self.rad_solar = self.get_rad_solar()
         self.rad_net_short = (1-self.albedo)*self.rad_solar
-        self.rad_net_wave_no_cloud = (
-            0.75 + (2*self.height/100000))*self.calc_radiation_extra()
+        self.rad_solar_0 = (0.75 + (2*self.height/100000)) * \
+            self.calc_radiation_extra()
         presure_vap, e_s = self.calc_preasure()
-        self.rad_net_long = (4.903*10**(-9/2))*1.35*((self.rad_solar/self.rad_solar_0)-0.35)*(
-            0.34-0.14*presure_vap**0.5)*((self.t_max+273.0)**4 + (self.t_min+273.0)**4)
+        #self.rad_net_long = 4.903*10**(-9)*1.35*((self.rad_solar/self.rad_solar_0)-0.35)*(
+        #    0.34-0.14*presure_vap**0.5)*((self.t_max+273.0)**4 + (self.t_min+273.0)**4)
+        self.rad_net_long = 4.903*10**(-9)*((self.t_max+273.0)**4 + (self.t_min+273.0)**4)/2*(0.34-(0.14*presure_vap**0.5))*1.35*((self.rad_solar/self.rad_solar_0)-0.35)
         self.rad_net = self.rad_net_long - self.rad_net_short
-
+        
         thermal_flow = 0.1*(self.t_med-self.t_medprevious)
         gamma, lambda_vap = self.calc_gamma()
         delta = self.calc_delta()
@@ -75,7 +81,6 @@ class calculateEto(object):
                                                    (self.t_med+273.16))*lambda_vap*(e_s-presure_vap)
         den = delta+lambda_vap*(1+0.34*self.wind_speed)
         et_0 = 1/lambda_vap * num/den
-        # print(self.wind_speed)
         return et_0
 
     def get_rad_solar(self):
@@ -85,7 +90,7 @@ class calculateEto(object):
         # days are on julian days
         distance_earth_sun = 1 + 0.033 * math.cos(((2*math.pi)/365)*self.days)
         # Latitude and logitude on radians:
-        #Convert latitude in º to radians
+        # Convert latitude in º to radians
         self.latitude = math.radians(self.latitude)
         # Solar declination:
         declination = 0.409*math.sin((2*math.pi)/365.0 * self.days - 1.39)
@@ -121,9 +126,7 @@ class calculateEto(object):
 
 
 calc = calculateEto()
-print(calc)
-calc.get_data()
-print(calc)
 print(calc.calc_eto())
+print(calc)
 # a = RequestAemet()
 # print(a)

@@ -2,8 +2,10 @@ from flask import Flask, render_template, request
 from flask_mqtt import Mqtt
 from credential import *
 from apikey import Apikey
+from calculateEto import calculateEto
 from tools import *
 import json
+import time
 
 # Inicialize the mqtt class and set the credentials for the correct connection:
 app = Flask(__name__)
@@ -48,7 +50,8 @@ def documentation():
 
 @app.route('/cal_etc')
 def cal_etc():
-    return '12.2'
+    et0 = calculateEto().calc_eto()
+    return str(et0)
 
 @app.route('/api/manvalve', methods=['POST'])
 def manvalve():
