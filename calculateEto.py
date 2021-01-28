@@ -14,8 +14,9 @@ class calculateEto(object):
         - Height
      - There are 12 necessary values
     """
+
     def __init__(self):
-        #The initial data that we need to start with:
+        # The initial data that we need to start with:
         self.t_med = 15.11
         self.t_medprevious = 14.8
         self.t_max = 22.73
@@ -29,14 +30,30 @@ class calculateEto(object):
         self.latitude = 39.8152777
 
         # Constants:
-        self.days = self.get_julian(datetime.datetime.now())
+        self.days = self._get_julian(datetime.datetime.now())
         # If I want to calculate on specific day:
-        # self.days = self.get_julian(datetime.datetime(2018,3,18))
-
+        # self.days = self._get_julian(datetime.datetime(2018,3,18))
         self.rad_net = 0.0
         self.rad_net_short = 0.0
         self.rad_net_long = 0.0
         self.rad_solar_0 = 0.0
+
+    def load_file(self, input_data):
+        try: 
+            self.t_med = input_data['t_med']
+            self.t_medprevious = input_data['t_medprevious']
+            self.t_max = input_data['t_max']
+            self.t_min = input_data['t_min']
+            self.hum_max = input_data['hum_max']
+            self.hum_min = input_data['hum_min']
+            self.hum_med = input_data['hum_med']
+            self.rad_solar = input_data['rad_solar']
+            self.wind_speed = input_data['wind_speed']
+            self.height = input_data['height']
+            self.latitude = input_data['latitude']
+            return True
+        except:
+            return False
 
     def __repr__(self):
         data = ""
@@ -62,25 +79,25 @@ class calculateEto(object):
         self.t_max, self.t_min, self.t_med, self.hum_max, self.hum_min, self.wind_speed = weather_data.get_weather_params()
 
     def calc_eto(self):
-        #Short solar radiation:
+        # Short solar radiation:
         self.rad_net_short = (1-0.23)*self.rad_solar
-        #Extra solar radiation for day periods:
-        ra = self.calc_radiation_extra()
-        #Solar radiation on cloudy days:
+        # Extra solar radiation for day periods:
+        ra = self._calc_radiation_extra()
+        # Solar radiation on cloudy days:
         self.rad_solar_0 = (0.75 + (2*self.height/100000)) * ra
-        #Pressure vap
-        presure_vap, e_s = self.calc_preasure()
-        #Long solar radiation:
+        # Pressure vap
+        presure_vap, e_s = self._calc_preasure()
+        # Long solar radiation:
         self.rad_net_long = 4.903*10**(-9)*((self.t_max+273.16)**4 + (self.t_min+273.16)**4)/2*(
             0.34-(0.14*presure_vap**0.5))*(1.35*(self.rad_solar/self.rad_solar_0)-0.35)
         self.rad_net = self.rad_net_short - self.rad_net_long
         # Flujo termico de suelo
         thermal_flow = 0.1*(self.t_med-self.t_medprevious)
         # Constante psicrométrica
-        gamma, lambda_vap = self.calc_gamma()
-        delta = self.calc_delta()
+        gamma, lambda_vap = self._calc_gamma()
+        delta = self._calc_delta()
         # Convert to m/s
-        self.wind_speed /= 3.6  
+        self.wind_speed /= 3.6
         # The last operation to get the ET_0:
         num = delta*(self.rad_net - thermal_flow)+(gamma*900 *
                                                    self.wind_speed*lambda_vap*(e_s-presure_vap))/(self.t_med+273.16)
@@ -88,7 +105,7 @@ class calculateEto(object):
         et_0 = num/den
         return et_0
 
-    def calc_radiation_extra(self):
+    def _calc_radiation_extra(self):
         # Days are on julian days
         distance_earth_sun = 1 + 0.033 * math.cos(((2*math.pi)/365)*self.days)
         # Latitude and logitude on radians:
@@ -101,12 +118,12 @@ class calculateEto(object):
                                                              * math.sin(declination) + math.cos(self.latitude)*math.cos(declination)*math.sin(solar_angle))
         return ra
 
-    def calc_preasure(self):
+    def _calc_preasure(self):
         e_max = 0.6108*math.e**((17.27*self.t_max)/(self.t_max+237.3))
         e_min = 0.6108*math.e**((17.27*self.t_min)/(self.t_min+237.3))
         return ((e_max*self.hum_min/100.0)+(e_min*self.hum_max/100))/2, (e_max+e_min)/2
 
-    def calc_gamma(self):
+    def _calc_gamma(self):
         # Phicromertric constant:
         c_p = 1.102*10**(-3)
         lambda_vap = 2.501 - (0.002361*self.t_med)
@@ -114,13 +131,13 @@ class calculateEto(object):
         gamma = (c_p*P)/(0.622*lambda_vap)
         return gamma, lambda_vap
 
-    def calc_delta(self):
+    def _calc_delta(self):
         # Correlation between temperatura and vapor pressure
         t = (self.t_max + self.t_min)/2
         e_med = 0.6108*math.e**((17.27*t)/(t+237.3))
         return (4098*e_med) / ((self.t_max+self.t_min)/2 + 237.3)**2
 
-    def get_julian(self, date):
+    def _get_julian(self, date):
         # Substract the current day to the first day of the year:
         first_day_year = datetime.datetime(date.year, 1, 1)
         julian_day = (date-first_day_year).days + 1
