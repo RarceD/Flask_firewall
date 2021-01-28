@@ -27,7 +27,7 @@ et0_json = {
 }
 
 j = json.dumps(et0_json)
-r = requests.post(SERVER + '/cal_etc', j)
+r = requests.get(SERVER + '/cal_etc', j)
 print(r)
 # for index, req in enumerate(all_requests_jsons):
 #     j = json.dumps(req)

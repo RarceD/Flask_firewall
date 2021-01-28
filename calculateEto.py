@@ -39,7 +39,7 @@ class calculateEto(object):
         self.rad_solar_0 = 0.0
 
     def load_file(self, input_data):
-        try: 
+        try:
             self.t_med = input_data['t_med']
             self.t_medprevious = input_data['t_medprevious']
             self.t_max = input_data['t_max']
@@ -142,10 +142,3 @@ class calculateEto(object):
         first_day_year = datetime.datetime(date.year, 1, 1)
         julian_day = (date-first_day_year).days + 1
         return julian_day
-
-
-calc = calculateEto()
-print("ET0: ", calc.calc_eto())
-# print(calc)
-# a = RequestAemet()
-# print(a)

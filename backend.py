@@ -49,22 +49,20 @@ def documentation():
     return render_template('guide.html')
 
 
-@app.route('/cal_etc', methods=['GET', 'POST'])
+@app.route('/cal_etc', methods=['GET'])
 def cal_etc():
-    if request.method == 'GET':
-        et0 = calculateEto()
-        et0.get_data()
-        return str(et0.calc_eto())
-    elif request.method == 'POST':
+    # If I received data I calculate it with them, if not make it with aemet
+    if request.data:
         json_data = json.loads(request.data)
         et0 = calculateEto()
         if (et0.load_file(json_data)):
             return 'et0: '+str(et0.calc_eto())
-        else: 
+        else:
             return REQUEST_RESPONSE['JSON_ERROR'], 406
     else:
-        return REQUEST_RESPONSE['NOT_ENDPOINT'], 500
-
+        et0 = calculateEto()
+        et0.get_data()
+        return str(et0.calc_eto())
 
 
 @app.route('/api/manvalve', methods=['POST'])
