@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Calculate</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <script src="https://unpkg.com/@ionic/core@0.0.2-20/dist/ionic.js"></script>
+  </head>
+  <script>
+    function send_parameters_eto() {
+      let data_recived;
+      let http = new XMLHttpRequest();
+      http.open("GET", "http://localhost:5000/cal_etc");
+      http.send();
+      http.onload = () => {
+        // console.log(http.responseText);
+        document.getElementById("eto_get_value").textContent = http.responseText.substr(0, 5)+" mm/dia";
+        var input = document.getElementById("test").textContent;
+        document.getElementById("test").textContent = "34";
+        console.log(input);
+        
+      }
+    }
+  </script>
+
+  <body>
+    <ion-app>
+      <ion-header>
+        <ion-navbar>
+          <ion-title>Cálculo de ETo:</ion-title>
+        </ion-navbar>
+      </ion-header>
+
+      <ion-content padding>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-item> <b> Temperatura:</b> </ion-item>
+              <ion-item>
+                <ion-label position="floating">- Media hoy: </ion-label>
+                <ion-input type="number" value="15.11"></ion-input>
+                <ion-label position="floating"> ºC </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">- Máxima actual: </ion-label>
+                <ion-input type="number" value="22.73"></ion-input>
+                <ion-label position="floating"> ºC </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">- Mínima actual: </ion-label>
+                <ion-input type="number" value="8.35"></ion-input>
+                <ion-label position="floating"> ºC </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating"
+                  >- Media día anterior:
+                </ion-label>
+                <ion-input type="number" value="14.8"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item> <b> Humedad:</b></ion-item>
+              <ion-item>
+                <ion-label position="floating">- Media: </ion-label>
+                <ion-input type="number" value="43.21"></ion-input>
+                <ion-label position="floating"> % </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">- Máxima: </ion-label>
+                <ion-input type="number" value="53.46"></ion-input>
+                <ion-label position="floating"> % </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">- Mínima: </ion-label>
+                <ion-input type="number"></ion-input>
+                <div id="test"></div>
+                </div>
+                <ion-label position="floating"> % </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item> <b>Otros:</b></ion-item>
+              <ion-item>
+                <ion-label position="floating">- Radiación Solar: </ion-label>
+                <ion-input type="number" value="21.37"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating"
+                  >- Velocidad de viento:
+                </ion-label>
+                <ion-input type="number" value="12.73"></ion-input>
+                <ion-label position="floating"> km/h </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">- Altitud: </ion-label>
+                <ion-input type="number" value="834"></ion-input>
+                <ion-label position="floating"> m</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label position="floating">- Latitud: </ion-label>
+                <ion-input type="number" value="39.815277"></ion-input>
+                <ion-label position="floating"> grados </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-grid>
+          <ion-row>
+            <ion-col></ion-col>
+            <ion-col></ion-col>
+            <ion-col></ion-col>
+            <ion-col></ion-col>
+            <ion-col>
+              <ion-button onClick="send_parameters_eto()">Calcular ETo</ion-button
+                >
+                <ion-item>
+                  <pre id="eto_get_value"></pre>
+                </ion-item>
+              </ion-col>
+              <ion-col> </ion-col>
+              <ion-col></ion-col>
+              <ion-col> </ion-col>
+              <ion-col></ion-col>
+            </ion-row>
+          </ion-grid>
+      </ion-content>
+    </ion-app>
+  </body>
+</html>
