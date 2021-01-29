@@ -12,19 +12,78 @@
     <script src="https://unpkg.com/@ionic/core@0.0.2-20/dist/ionic.js"></script>
   </head>
   <script>
+    window.onload = function () {
+      document.getElementById("t_med").value = 35.11;
+      document.getElementById("t_medprevious").value = 14.8;
+      document.getElementById("t_max").value = 22.73;
+      document.getElementById("t_min").value = 8.35;
+      document.getElementById("hum_max").value = 53.4;
+      document.getElementById("hum_min").value = 25.05;
+      document.getElementById("hum_med").value = 41.1;
+      document.getElementById("rad_solar").value = 21.37;
+      document.getElementById("wind_speed").value = 12.744;
+      document.getElementById("height").value = 371.0;
+      document.getElementById("latitude").value = 39.8152777;
+    };
+    var eto_data = {
+      t_med: 15.11,
+      t_medprevious: 14.8,
+      t_max: 42.73,
+      t_min: 8.35,
+      hum_max: 53.4,
+      hum_min: 25.05,
+      hum_med: 41.1,
+      rad_solar: 21.37,
+      wind_speed: 12.744,
+      height: 371.0,
+      latitude: 39.8152777,
+    };
     function send_parameters_eto() {
-      let data_recived;
+      eto_data["t_med"] = document.getElementById("t_med").value;
+      eto_data["t_medprevious"] = document.getElementById(
+        "t_medprevious"
+      ).value;
+      eto_data["t_max"] = parseInt(document.getElementById("t_max").value, 10);
+      eto_data["t_min"] = parseInt(document.getElementById("t_min").value, 10);
+      eto_data["hum_max"] = parseInt(
+        document.getElementById("hum_max").value,
+        10
+      );
+      eto_data["hum_min"] = parseInt(
+        document.getElementById("hum_min").value,
+        10
+      );
+      eto_data["hum_med"] = parseInt(
+        document.getElementById("hum_med").value,
+        10
+      );
+      eto_data["rad_solar"] = parseInt(
+        document.getElementById("rad_solar").value,
+        10
+      );
+      eto_data["wind_speed"] = parseInt(
+        document.getElementById("wind_speed").value,
+        10
+      );
+      eto_data["height"] = parseInt(
+        document.getElementById("height").value,
+        10
+      );
+      eto_data["latitude"] = parseInt(
+        document.getElementById("latitude").value,
+        10
+      );
       let http = new XMLHttpRequest();
       http.open("GET", "http://localhost:5000/cal_etc");
-      http.send();
+      http.send(eto_data);
       http.onload = () => {
         // console.log(http.responseText);
-        document.getElementById("eto_get_value").textContent = http.responseText.substr(0, 5)+" mm/dia";
-        var input = document.getElementById("test").textContent;
-        document.getElementById("test").textContent = "34";
-        console.log(input);
-        
-      }
+        document.getElementById("eto_get_value").textContent =
+          http.responseText.substr(0, 5) + " mm/dia";
+      };
+      // var data_json = JSON.stringify(eto_data);
+      // console.log(eto_data);
+      // console.log(data_json);
     }
   </script>
 
@@ -43,24 +102,24 @@
               <ion-item> <b> Temperatura:</b> </ion-item>
               <ion-item>
                 <ion-label position="floating">- Media hoy: </ion-label>
-                <ion-input type="number" value="15.11"></ion-input>
+                <ion-input id="t_med"></ion-input>
                 <ion-label position="floating"> ºC </ion-label>
               </ion-item>
               <ion-item>
                 <ion-label position="floating">- Máxima actual: </ion-label>
-                <ion-input type="number" value="22.73"></ion-input>
+                <ion-input id="t_max"></ion-input>
                 <ion-label position="floating"> ºC </ion-label>
               </ion-item>
               <ion-item>
                 <ion-label position="floating">- Mínima actual: </ion-label>
-                <ion-input type="number" value="8.35"></ion-input>
+                <ion-input id="t_min"></ion-input>
                 <ion-label position="floating"> ºC </ion-label>
               </ion-item>
               <ion-item>
                 <ion-label position="floating"
                   >- Media día anterior:
                 </ion-label>
-                <ion-input type="number" value="14.8"></ion-input>
+                <ion-input id="t_medprevious"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -69,19 +128,17 @@
               <ion-item> <b> Humedad:</b></ion-item>
               <ion-item>
                 <ion-label position="floating">- Media: </ion-label>
-                <ion-input type="number" value="43.21"></ion-input>
+                <ion-input id="hum_med"></ion-input>
                 <ion-label position="floating"> % </ion-label>
               </ion-item>
               <ion-item>
                 <ion-label position="floating">- Máxima: </ion-label>
-                <ion-input type="number" value="53.46"></ion-input>
+                <ion-input id="hum_max"></ion-input>
                 <ion-label position="floating"> % </ion-label>
               </ion-item>
               <ion-item>
                 <ion-label position="floating">- Mínima: </ion-label>
-                <ion-input type="number"></ion-input>
-                <div id="test"></div>
-                </div>
+                <ion-input id="hum_min"></ion-input>
                 <ion-label position="floating"> % </ion-label>
               </ion-item>
             </ion-col>
@@ -91,23 +148,23 @@
               <ion-item> <b>Otros:</b></ion-item>
               <ion-item>
                 <ion-label position="floating">- Radiación Solar: </ion-label>
-                <ion-input type="number" value="21.37"></ion-input>
+                <ion-input id="rad_solar"></ion-input>
               </ion-item>
               <ion-item>
                 <ion-label position="floating"
                   >- Velocidad de viento:
                 </ion-label>
-                <ion-input type="number" value="12.73"></ion-input>
+                <ion-input id="wind_speed"></ion-input>
                 <ion-label position="floating"> km/h </ion-label>
               </ion-item>
               <ion-item>
                 <ion-label position="floating">- Altitud: </ion-label>
-                <ion-input type="number" value="834"></ion-input>
+                <ion-input id="height"></ion-input>
                 <ion-label position="floating"> m</ion-label>
               </ion-item>
               <ion-item>
                 <ion-label position="floating">- Latitud: </ion-label>
-                <ion-input type="number" value="39.815277"></ion-input>
+                <ion-input id="latitude"></ion-input>
                 <ion-label position="floating"> grados </ion-label>
               </ion-item>
             </ion-col>
@@ -120,18 +177,19 @@
             <ion-col></ion-col>
             <ion-col></ion-col>
             <ion-col>
-              <ion-button onClick="send_parameters_eto()">Calcular ETo</ion-button
-                >
-                <ion-item>
-                  <pre id="eto_get_value"></pre>
-                </ion-item>
-              </ion-col>
-              <ion-col> </ion-col>
-              <ion-col></ion-col>
-              <ion-col> </ion-col>
-              <ion-col></ion-col>
-            </ion-row>
-          </ion-grid>
+              <ion-button onClick="send_parameters_eto()"
+                >Calcular ETo</ion-button
+              >
+              <ion-item>
+                <pre id="eto_get_value"></pre>
+              </ion-item>
+            </ion-col>
+            <ion-col> </ion-col>
+            <ion-col></ion-col>
+            <ion-col> </ion-col>
+            <ion-col></ion-col>
+          </ion-row>
+        </ion-grid>
       </ion-content>
     </ion-app>
   </body>

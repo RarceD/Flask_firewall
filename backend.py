@@ -52,6 +52,7 @@ def documentation():
 @app.route('/cal_etc', methods=['GET'])
 def cal_etc():
     # If I received data I calculate it with them, if not make it with aemet
+    print_s( request.data)
     if request.data:
         json_data = json.loads(request.data)
         et0 = calculateEto()
