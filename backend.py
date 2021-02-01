@@ -22,17 +22,32 @@ data_keys = Apikey()
 data_keys.load_asssociation('data/uuid_client_real.json')
 # print(data_keys)
 
+"""
 
-# @app.route('/')
-# def test_api():
-#     return render_template('index.html')
+All the diferent web pages:
 
+"""
+@app.route('/')
+def init_https():
+    return render_template('index.html')
+
+@app.route('/guide')
+def test_api():
+    return render_template('guide.html')
+@app.route('/calculate')
+def calculate_eto():
+    return render_template('calculate.html')
+
+"""
+
+Mqtt listeners in case of watching the evolution of the controllers:
+
+"""
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
     mqtt.subscribe('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/test')
-    mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/2',
-                 'mqtt server start!!')
-
+    # mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/2',
+    #              'mqtt server start!!')
 
 @mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
@@ -40,19 +55,19 @@ def handle_mqtt_message(client, userdata, message):
         topic=message.topic,
         payload=message.payload.decode()
     )
-    mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/on_message', 'mqtt')
+    # mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/on_message', 'mqtt')
     # print_s(data)
 
+"""
 
-@app.route('/guide')
-def documentation():
-    return render_template('guide.html')
+Diferent endpoint to POST and publish the information:
 
+"""
 
-@app.route('/cal_etc', methods=['GET'])
+@app.route('/api/cal_etc', methods=['GET'])
 def cal_etc():
     # If I received data I calculate it with them, if not make it with aemet
-    print_s( request.data)
+    print_s(request.data)
     if request.data:
         json_data = json.loads(request.data)
         et0 = calculateEto()
@@ -292,5 +307,5 @@ def program():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=80)
     mqtt.init_app(app)
