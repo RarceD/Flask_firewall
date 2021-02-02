@@ -5,8 +5,9 @@ Every post must have a API KEY acording to the client, with this key it can only
 
 ## Running:
  ```python
-sudo pip install Flask
-sudo pip install flask-mqtt
+sudo pip install Flask # Backend framework
+sudo pip install flask-mqtt # mqtt handler
+pip install waitress # for development run
 ```
 
 ## Functionallity:

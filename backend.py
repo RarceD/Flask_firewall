@@ -63,22 +63,28 @@ def handle_mqtt_message(client, userdata, message):
 Diferent endpoint to POST and publish the information:
 
 """
-
-@app.route('/api/cal_etc', methods=['GET'])
+@app.route('/api/cal_etc', methods=['GET', 'POST'])
 def cal_etc():
     # If I received data I calculate it with them, if not make it with aemet
     print_s(request.data)
-    if request.data:
-        json_data = json.loads(request.data)
-        et0 = calculateEto()
-        if (et0.load_file(json_data)):
-            return 'et0: '+str(et0.calc_eto())
+    if flask.request.method == 'GET':
+        if request.data:
+            json_data = json.loads(request.data)
+            et0 = calculateEto()
+            if (et0.load_file(json_data)):
+                return 'et0: '+str(et0.calc_eto())
+            else:
+                return REQUEST_RESPONSE['JSON_ERROR'], 406
         else:
-            return REQUEST_RESPONSE['JSON_ERROR'], 406
+            et0 = calculateEto()
+            et0.get_data()
+            return str(et0.calc_eto())
+    elif flask.request.method == 'POST':
+        print_s("post received")
+        return 'ok'
     else:
-        et0 = calculateEto()
-        et0.get_data()
-        return str(et0.calc_eto())
+        return REQUEST_RESPONSE['JSON_ERROR'], 406
+
 
 
 @app.route('/api/manvalve', methods=['POST'])
@@ -307,5 +313,7 @@ def program():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=80)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=80)
+    # app.run(host="0.0.0.0", port=80)
     mqtt.init_app(app)
