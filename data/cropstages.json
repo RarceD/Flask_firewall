@@ -4,10 +4,12 @@
     "stage_days": [45, 30, 120, 20, 10],
     "depths_radicualar": [0.1, 0.2, 0.4, 0.4, 0.6],
     "depths_suelo": 1,
-    "stone_percentage": 10,
+    "stone_percentage":0.2,
     "precipitation_day":1,
     "efective_precipitation_day":1,
     "iHD_initial":85,
-    "radiocular_":1
-
+    "radiocular_":1, 
+    "et0":4.23, 
+    "cred_rad":0,
+    "nap":0.4
 }
