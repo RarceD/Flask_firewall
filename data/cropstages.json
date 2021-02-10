@@ -7,7 +7,7 @@
     "stone_percentage":0.2,
     "precipitation_day":1,
     "efective_precipitation_day":1,
-    "iHD_initial":85,
+    "iHD_initial":85,   
     "radiocular_":1, 
     "et0":4.23, 
     "cred_rad":0,
