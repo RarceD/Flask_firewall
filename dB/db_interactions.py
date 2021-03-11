@@ -1,17 +1,17 @@
 import sqlite3
-
 # for connected: .\sqlite3 dbchild
+from client_data_priv import clients_info, associated_uuids
 
 
-class Db_childen (object):
+class Db_handler (object):
 
     def __init__(self, path_file):
         self.path_file = path_file
         self.con = None
         if (self.create_connection()):
-            print("connected to db")
+            print("Connected to db")
         else:
-            print("not able to connect")
+            print("Not able to connect")
 
     def create_connection(self):
         try:
@@ -95,9 +95,57 @@ class Db_childen (object):
         cur.execute(sql_text, class_parameters)
         self.conn.commit()
 
+    def _create_clients(self):
+        sql_text = '''CREATE TABLE clients (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                client_name TEXT,
+                uuid TEXT,
+                associated_uuid INTEGER
+                );'''
+        cur = self.conn.cursor()
+        cur.execute(sql_text)
+        self.conn.commit()
+        #id - client_name - uuid - associated_uuid
+        for c in clients_info:
+            sql_text = '''INSERT INTO clients(client_name, uuid, associated_uuid) VALUES (?,?,?); '''
+            cur = self.conn.cursor()
+            cur.execute(sql_text, c)
+            self.conn.commit()
 
-db_path = "db"
-db = Db_childen(db_path)
+    def _delete_all(self):
+        sql_text = '''DROP TABLE clients;'''
+        cur = self.conn.cursor()
+        cur.execute(sql_text)
+        self.conn.commit()
+        sql_text = '''DROP TABLE uuid_associations;'''
+        cur = self.conn.cursor()
+        cur.execute(sql_text)
+        self.conn.commit()
+
+    def _create_uuid_associations(self):
+        sql_text = '''CREATE TABLE uuid_associations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                controller_uuid TEXT,
+                client_id INTEGER,
+                FOREIGN KEY (client_id)
+                    REFERENCES clients (id) 
+                );'''
+        cur = self.conn.cursor()
+        cur.execute(sql_text)
+        self.conn.commit()
+        #id - client_name - uuid - associated_uuid
+        for u in associated_uuids:
+            sql_text = '''INSERT INTO uuid_associations(controller_uuid, client_id) VALUES (?,?); '''
+            cur = self.conn.cursor()
+            cur.execute(sql_text, u)
+            self.conn.commit()
+
+
+db_path = "db_production"
+db = Db_handler(db_path)
+db._delete_all()
+db._create_clients()
+db._create_uuid_associations()
 # db.create_texture()
 # project = (3, "5ºD", "contraseña3", "image", "icon")
 # db.add_class(project)

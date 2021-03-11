@@ -74,10 +74,11 @@
         10
       );
       let http = new XMLHttpRequest();
-
+      console.log(String(eto_data));
       // http.open("GET", "https://www.api-hydro-plus.com/api/cal_etc");
       http.open("POST", "http://127.0.0.1/api/cal_etc");
-      http.send(eto_data);
+      http.send(String(eto_data));
+      console.log(eto_data);
       http.onload = () => {
         console.log(http.responseText);
         document.getElementById("eto_get_value").textContent =

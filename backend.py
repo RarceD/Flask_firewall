@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from flask_mqtt import Mqtt
+from flask_cors import CORS
 from credential import *
 from apikey import Apikey
 from calculateEto import calculateEto
@@ -9,6 +10,7 @@ import time
 
 # Inicialize the mqtt class and set the credentials for the correct connection:
 app = Flask(__name__)
+CORS(app)
 app.config['MQTT_BROKER_URL'] = MQTT_BROKER
 app.config['MQTT_BROKER_PORT'] = MQTT_PORT
 app.config['MQTT_USERNAME'] = MQTT_USER
@@ -34,6 +36,11 @@ def init_https():
 @app.route('/guide')
 def test_api():
     return render_template('guide.html')
+
+@app.route('/testcors')
+def test_api2():
+    return "no problem with cors"
+
 @app.route('/calculate')
 def calculate_eto():
     return render_template('calculate.html')
@@ -80,10 +87,17 @@ def cal_etc():
             et0.get_data()
             return str(et0.calc_eto())
     elif request.method == 'POST':
-        # print_s("post received")
+
+        print_s(request.data)
+        json_data = json.loads(request.data)
+        # et0 = calculateEto()
+        # if (et0.load_file(json_data)):
+        #     return 'et0: '+str(et0.calc_eto())
+        # else:
+        #     return REQUEST_RESPONSE['JSON_ERROR'], 406
         return 'ok'
-    else:
-        return REQUEST_RESPONSE['JSON_ERROR'], 406
+        # else:
+        #     return REQUEST_RESPONSE['JSON_ERROR'], 406
 
 
 

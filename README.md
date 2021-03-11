@@ -8,7 +8,8 @@ Every post must have a API KEY acording to the client, with this key it can only
 pip3 install Flask # Backend framework
 pip3 install flask-mqtt # mqtt handler
 pip3 install waitress # for development run
-pip3 install sqlite3 # DB:
+pip3 install sqlite3 # DB
+pip install -U flask-cors #Cors enabled
 ```
 
 ## Functionallity:
