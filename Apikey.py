@@ -75,4 +75,5 @@ def test_api_key():
     random_uuid = "Xxfs9g510gvBXP7YGjRGMg"
     print(data_keys)
 
-# test_api_key()
+# api = Apikey()
+# print(api.generate_key(32))

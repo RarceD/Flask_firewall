@@ -66,8 +66,8 @@ Diferent endpoint to POST and publish the information:
 @app.route('/api/cal_etc', methods=['GET', 'POST'])
 def cal_etc():
     # If I received data I calculate it with them, if not make it with aemet
-    print_s(request.data)
-    if flask.request.method == 'GET':
+    # print_s(request.data)
+    if request.method == 'GET':
         if request.data:
             json_data = json.loads(request.data)
             et0 = calculateEto()
@@ -79,8 +79,8 @@ def cal_etc():
             et0 = calculateEto()
             et0.get_data()
             return str(et0.calc_eto())
-    elif flask.request.method == 'POST':
-        print_s("post received")
+    elif request.method == 'POST':
+        # print_s("post received")
         return 'ok'
     else:
         return REQUEST_RESPONSE['JSON_ERROR'], 406

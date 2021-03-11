@@ -5,15 +5,16 @@ Every post must have a API KEY acording to the client, with this key it can only
 
 ## Running:
  ```python
-sudo pip install Flask # Backend framework
-sudo pip install flask-mqtt # mqtt handler
-pip install waitress # for development run
+pip3 install Flask # Backend framework
+pip3 install flask-mqtt # mqtt handler
+pip3 install waitress # for development run
+pip3 install sqlite3 # DB:
 ```
 
 ## Functionallity:
     [x] Received a post with a fix json format and a key.
-    [X] Check if the user with this key is able to interact with this uuid.
-    [ ] Sqlite python, for storing this associated information. 
+    [x] Check if the user with this key is able to interact with this uuid.
+    [x] Sqlite python, for storing this associated information. 
     [x] Filter and discard wrong parameters and messages.
     [x] Inform of wrong request in order to re post it well.
     [x] Publish the information on the broker.
