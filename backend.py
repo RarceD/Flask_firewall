@@ -4,6 +4,7 @@ from flask_cors import CORS
 from credential import *
 from apikey import Apikey
 from calculateEto import calculateEto
+from dB.db_interactions import Db_handler
 from tools import *
 import json
 import time
@@ -22,10 +23,8 @@ mqtt = Mqtt(app)
 # Create a AssociationUuidClient data type and check  all the available uuid for each client
 data_keys = Apikey()
 data_keys.load_asssociation('data/uuid_client_real.json')
-# print(data_keys)
 
 """
-
 All the diferent web pages:
 
 """
@@ -33,17 +32,21 @@ All the diferent web pages:
 def init_https():
     return render_template('index.html')
 
+
 @app.route('/guide')
 def test_api():
     return render_template('guide.html')
+
 
 @app.route('/testcors')
 def test_api2():
     return "no problem with cors"
 
+
 @app.route('/calculate')
 def calculate_eto():
     return render_template('calculate.html')
+
 
 """
 
@@ -56,6 +59,7 @@ def handle_connect(client, userdata, flags, rc):
     # mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/2',
     #              'mqtt server start!!')
 
+
 @mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
     data = dict(
@@ -65,6 +69,7 @@ def handle_mqtt_message(client, userdata, message):
     # mqtt.publish('abcab9a1-8b22-40b0-b4bf-fb8e182f7508/on_message', 'mqtt')
     # print_s(data)
 
+
 """
 
 Diferent endpoint to POST and publish the information:
@@ -73,7 +78,6 @@ Diferent endpoint to POST and publish the information:
 @app.route('/api/cal_etc', methods=['GET', 'POST'])
 def cal_etc():
     # If I received data I calculate it with them, if not make it with aemet
-    # print_s(request.data)
     if request.method == 'GET':
         if request.data:
             json_data = json.loads(request.data)
@@ -87,18 +91,17 @@ def cal_etc():
             et0.get_data()
             return str(et0.calc_eto())
     elif request.method == 'POST':
-
-        print_s(request.data)
         json_data = json.loads(request.data)
-        # et0 = calculateEto()
-        # if (et0.load_file(json_data)):
-        #     return 'et0: '+str(et0.calc_eto())
+        # print_s(request.data)
+        # print_s(json_data)
+        et0 = calculateEto()
+        if (et0.load_file(json_data)):
+            return str(et0.calc_eto())
+        else:
+            return REQUEST_RESPONSE['JSON_ERROR'], 406
+ 
         # else:
         #     return REQUEST_RESPONSE['JSON_ERROR'], 406
-        return 'ok'
-        # else:
-        #     return REQUEST_RESPONSE['JSON_ERROR'], 406
-
 
 
 @app.route('/api/manvalve', methods=['POST'])
@@ -115,8 +118,8 @@ def manvalve():
         client = json_data['client']
     except:
         return REQUEST_RESPONSE['JSON_ERROR'], 406
-
-    if (data_keys.check_if_associated(uuid=uuid, client=client)):
+    db = Db_handler("dB/db_production")
+    if (db.check_uuid_is_association(uuid_received=uuid, client_received=client)):
         for valve in json_data['valves']:
             time = str(valve['time'])
             valve_pass = int(valve['v']) <= 128
@@ -152,10 +155,10 @@ def manprog():
         client = json_data['client']
     except:
         return REQUEST_RESPONSE['JSON_ERROR'], 406
-    if (data_keys.check_if_associated(uuid=uuid, client=client)):
+    db = Db_handler("dB/db_production")
+    if (db.check_uuid_is_association(uuid_received=uuid, client_received=client)):
         if json_data['prog'] in "ABCDEF" and int(json_data['action']) <= 1:
             send_ok_response = True
-        # print_s(json_data['action'])
         if (send_ok_response):
             json_data["id"] = 1
             json_data.pop('uuid')
@@ -181,7 +184,8 @@ def general():
     except:
         return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
 
-    if (data_keys.check_if_associated(uuid=uuid, client=client)):
+    db = Db_handler("dB/db_production")
+    if (db.check_uuid_is_association(uuid_received=uuid, client_received=client)):
         # implement a filter to check if msg is ok:
         send_ok_response = True
         if "pump_delay" in json_data:
@@ -245,7 +249,8 @@ def stop():
         client = json_data['client']
     except:
         return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
-    if (data_keys.check_if_associated(uuid=uuid, client=client)):
+    db = Db_handler("dB/db_production")
+    if (db.check_uuid_is_association(uuid_received=uuid, client_received=client)):
         json_data["id"] = 1
         json_data.pop('uuid')
         json_data.pop('client')
@@ -271,8 +276,9 @@ def program():
         client = json_data['client']
     except:
         return REQUEST_RESPONSE['PUBLISH_ERROR'], 407
+    db = Db_handler("dB/db_production")
+    if (db.check_uuid_is_association(uuid_received=uuid, client_received=client)):
 
-    if (data_keys.check_if_associated(uuid=uuid, client=client)):
         # i check if the parameters are ok:
         send_ok_response = True
         if prog not in "ABCDEF":

@@ -26,11 +26,11 @@ et0_json = {
     "latitude": 39.8152777
 }
 
-j = json.dumps(et0_json)
-r = requests.get(SERVER + '/cal_etc', j)
-print(r)
-# for index, req in enumerate(all_requests_jsons):
-#     j = json.dumps(req)
-#     r = requests.post(SERVER + urls[index], j)
-#     print(r)
-#     time.sleep(0.1)
+# j = json.dumps(et0_json)
+# r = requests.get(SERVER + '/cal_etc', j)
+# print(r)
+for index, req in enumerate(all_requests_jsons):
+    j = json.dumps(req)
+    r = requests.post(SERVER + urls[index], j)
+    print(r)
+    time.sleep(0.1)

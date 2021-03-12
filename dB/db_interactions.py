@@ -1,7 +1,7 @@
 import sqlite3
 import time
 # for connected: .\sqlite3 dbchild
-from client_data_priv import clients_info, associated_uuids, uuid_received_test, client_received_test
+from dB.client_data_priv import clients_info, associated_uuids, uuid_received_test, client_received_test
 
 
 class Db_handler (object):
@@ -10,9 +10,9 @@ class Db_handler (object):
         self.path_file = path_file
         self.con = None
         if (self.create_connection()):
-            print("Connected to db")
-        else:
-            print("Not able to connect")
+            pass
+        # else:
+        #     print("Not able to connect")
 
     def create_connection(self):
         try:
@@ -144,29 +144,32 @@ class Db_handler (object):
             self.conn.commit()
 
     def check_uuid_is_association(self, uuid_received, client_received):
-        # First I get the client id from the uuid_associations table:
-        sql_text = """SELECT client_id  FROM uuid_associations WHERE "controller_uuid"=?;"""
-        cur = self.conn.cursor()
-        cur.execute(sql_text, [(uuid_received)])
-        db_client_id_table_uuid_assocaitions = cur.fetchall()[0][0]
-        print("The client_id in controller_uuid table is",
-              db_client_id_table_uuid_assocaitions)
-        # Second I get the id from the clients table:
-        sql_text = """SELECT id  FROM clients WHERE "uuid"=?;"""
-        cur = self.conn.cursor()
-        cur.execute(sql_text, [(client_received)])
-        db_client_id_table_clients = cur.fetchall()[0][0]
-        print("The client_id in client table is", db_client_id_table_clients)
-        # Third get the name of the client:
-        sql_text = """SELECT client_name FROM clients WHERE "uuid"=?;"""
-        cur = self.conn.cursor()
-        cur.execute(sql_text, [(client_received)])
-        client_name_info = cur.fetchall()[0][0]
-        print("The client_name in client table is", client_name_info)
+        try:
+            # First I get the client id from the uuid_associations table:
+            sql_text = """SELECT client_id  FROM uuid_associations WHERE "controller_uuid"=?;"""
+            cur = self.conn.cursor()
+            cur.execute(sql_text, [(uuid_received)])
+            db_client_id_table_uuid_assocaitions = cur.fetchall()[0][0]
+            print("The client_id in controller_uuid table is",
+                db_client_id_table_uuid_assocaitions)
+            # Second I get the id from the clients table:
+            sql_text = """SELECT id  FROM clients WHERE "uuid"=?;"""
+            cur = self.conn.cursor()
+            cur.execute(sql_text, [(client_received)])
+            db_client_id_table_clients = cur.fetchall()[0][0]
+            print("The client_id in client table is", db_client_id_table_clients)
+            # Third get the name of the client:
+            sql_text = """SELECT client_name FROM clients WHERE "uuid"=?;"""
+            cur = self.conn.cursor()
+            cur.execute(sql_text, [(client_received)])
+            client_name_info = cur.fetchall()[0][0]
+            print("The client_name in client table is", client_name_info)
+        except:
+            return False
 
 
         if (db_client_id_table_uuid_assocaitions == db_client_id_table_clients):
-            self.add_popularity(client_name_info)
+            self._add_popularity(client_name_info)
             return True
         else:
             print("Not now")
@@ -193,17 +196,14 @@ class Db_handler (object):
             return "this client does not exist"
         
         
-    def add_popularity(self, client_received):
+    def _add_popularity(self, client_received):
         sql_text = '''INSERT INTO popularity(client_name, time_request) VALUES (?,?); '''
         cur = self.conn.cursor()
         cur.execute(sql_text, (client_received, str(time.ctime())))
         self.conn.commit()
         
-
-
-
-db_path = "db_production"
-db = Db_handler(db_path)
+# db_path = "db_production"
+# db = Db_handler(db_path)
 # db.create_db()
 # db._delete_all()
 # db.create_texture()
@@ -211,4 +211,4 @@ db = Db_handler(db_path)
 # db._create_uuid_associations()
 # db.check_uuid_is_association(uuid_received=uuid_received_test,
 #                              client_received=client_received_test)
-print(db.check_popularity("RARCED"))
+# print(db.check_popularity("RARCED"))

@@ -57,16 +57,16 @@ class Apikey (object):
                     return False
         else:
             return False
+
     def __repr__(self):
         return_data = ""
         for d in self.association_uuid_client:
-            return_data+=d.client + " -> "
+            return_data += d.client + " -> "
             for u in d.uuid:
-                return_data+= u + ', '
+                return_data += u + ', '
             return_data += '\n'
         return (return_data)
 
-    
 
 def test_api_key():
     data_keys = Apikey()
