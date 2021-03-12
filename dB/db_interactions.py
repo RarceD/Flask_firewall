@@ -1,6 +1,7 @@
 import sqlite3
+import time
 # for connected: .\sqlite3 dbchild
-from client_data_priv import clients_info, associated_uuids
+from client_data_priv import clients_info, associated_uuids, uuid_received_test, client_received_test
 
 
 class Db_handler (object):
@@ -31,13 +32,13 @@ class Db_handler (object):
                 id integer,
                 name_texture text,
                 fc text,
-                wp text, 
+                wp text,
                 ep text
                 );'''
             cur = self.conn.cursor()
             cur.execute(sql_text)
             self.conn.commit()
-            #group - texture - FC - WP - EP
+            # group - texture - FC - WP - EP
             texture_info = [
                 (1,  "Arenoso", 0.100	, 0.033	, 0.437),
                 (2,  "Arenoso Franco", 0.135	, 0.055	, 0.437),
@@ -68,7 +69,7 @@ class Db_handler (object):
             cur = self.conn.cursor()
             cur.execute(sql_text)
             self.conn.commit()
-            #group - A - B - C
+            # group - A - B - C
             nap_info = [
                 (1, 0.850, 1.585, 0.405),
                 (2, 0.786, 3.501, 0.472),
@@ -105,7 +106,7 @@ class Db_handler (object):
         cur = self.conn.cursor()
         cur.execute(sql_text)
         self.conn.commit()
-        #id - client_name - uuid - associated_uuid
+        # id - client_name - uuid - associated_uuid
         for c in clients_info:
             sql_text = '''INSERT INTO clients(client_name, uuid, associated_uuid) VALUES (?,?,?); '''
             cur = self.conn.cursor()
@@ -126,26 +127,88 @@ class Db_handler (object):
         sql_text = '''CREATE TABLE uuid_associations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 controller_uuid TEXT,
-                client_id INTEGER,
+                client_id INTEGER NOT NULL,
                 FOREIGN KEY (client_id)
-                    REFERENCES clients (id) 
+                REFERENCES clients (id)
+                    ON UPDATE RESTRICT
+                    ON DELETE RESTRICT
                 );'''
         cur = self.conn.cursor()
         cur.execute(sql_text)
         self.conn.commit()
-        #id - client_name - uuid - associated_uuid
+        # id - client_name - uuid - associated_uuid
         for u in associated_uuids:
             sql_text = '''INSERT INTO uuid_associations(controller_uuid, client_id) VALUES (?,?); '''
             cur = self.conn.cursor()
             cur.execute(sql_text, u)
             self.conn.commit()
 
+    def check_uuid_is_association(self, uuid_received, client_received):
+        # First I get the client id from the uuid_associations table:
+        sql_text = """SELECT client_id  FROM uuid_associations WHERE "controller_uuid"=?;"""
+        cur = self.conn.cursor()
+        cur.execute(sql_text, [(uuid_received)])
+        db_client_id_table_uuid_assocaitions = cur.fetchall()[0][0]
+        print("The client_id in controller_uuid table is",
+              db_client_id_table_uuid_assocaitions)
+        # Second I get the id from the clients table:
+        sql_text = """SELECT id  FROM clients WHERE "uuid"=?;"""
+        cur = self.conn.cursor()
+        cur.execute(sql_text, [(client_received)])
+        db_client_id_table_clients = cur.fetchall()[0][0]
+        print("The client_id in client table is", db_client_id_table_clients)
+        # Third get the name of the client:
+        sql_text = """SELECT client_name FROM clients WHERE "uuid"=?;"""
+        cur = self.conn.cursor()
+        cur.execute(sql_text, [(client_received)])
+        client_name_info = cur.fetchall()[0][0]
+        print("The client_name in client table is", client_name_info)
+
+
+        if (db_client_id_table_uuid_assocaitions == db_client_id_table_clients):
+            self.add_popularity(client_name_info)
+            return True
+        else:
+            print("Not now")
+            return False
+
+    def check_popularity(self, client):
+        # Get all the client that has request interactions:
+        try:
+            sql_text = """CREATE TABLE popularity (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        client_name TEXT,
+                        time_request TEXT);"""
+            cur = self.conn.cursor()
+            cur.execute(sql_text)
+            self.conn.commit()
+        except:
+            pass
+        try:
+            sql_text = """SELECT COUNT (*) FROM popularity WHERE client_name=?;"""
+            cur = self.conn.cursor()
+            cur.execute(sql_text, [client])
+            return (cur.fetchall()[0][0])
+        except:
+            return "this client does not exist"
+        
+        
+    def add_popularity(self, client_received):
+        sql_text = '''INSERT INTO popularity(client_name, time_request) VALUES (?,?); '''
+        cur = self.conn.cursor()
+        cur.execute(sql_text, (client_received, str(time.ctime())))
+        self.conn.commit()
+        
+
+
 
 db_path = "db_production"
 db = Db_handler(db_path)
-db._delete_all()
-db._create_clients()
-db._create_uuid_associations()
+# db.create_db()
+# db._delete_all()
 # db.create_texture()
-# project = (3, "5ºD", "contraseña3", "image", "icon")
-# db.add_class(project)
+# db._create_clients()
+# db._create_uuid_associations()
+# db.check_uuid_is_association(uuid_received=uuid_received_test,
+#                              client_received=client_received_test)
+print(db.check_popularity("RARCED"))
