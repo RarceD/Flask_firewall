@@ -194,8 +194,7 @@ class Db_handler (object):
             return (cur.fetchall()[0][0])
         except:
             return "this client does not exist"
-        
-        
+             
     def _add_popularity(self, client_received):
         sql_text = '''INSERT INTO popularity(client_name, time_request) VALUES (?,?); '''
         cur = self.conn.cursor()

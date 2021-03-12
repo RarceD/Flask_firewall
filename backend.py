@@ -3,7 +3,7 @@ from flask_mqtt import Mqtt
 from flask_cors import CORS
 from credential import *
 from apikey import Apikey
-from calculateEto import calculateEto
+from calculations.calculateEto import calculateEto
 from dB.db_interactions import Db_handler
 from tools import *
 import json

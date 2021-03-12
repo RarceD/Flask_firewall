@@ -1,5 +1,5 @@
 import math
-from requestAemet import RequestAemet
+from calculations.requestAemet import RequestAemet
 import datetime
 
 
@@ -40,17 +40,17 @@ class calculateEto(object):
 
     def load_file(self, input_data):
         try:
-            self.t_med = input_data['t_med']
-            self.t_medprevious = input_data['t_medprevious']
-            self.t_max = input_data['t_max']
-            self.t_min = input_data['t_min']
-            self.hum_max = input_data['hum_max']
-            self.hum_min = input_data['hum_min']
-            self.hum_med = input_data['hum_med']
-            self.rad_solar = input_data['rad_solar']
-            self.wind_speed = input_data['wind_speed']
-            self.height = input_data['height']
-            self.latitude = input_data['latitude']
+            self.t_med = float(input_data['t_med'])
+            self.t_medprevious = float(input_data['t_medprevious'])
+            self.t_max = float(input_data['t_max'])
+            self.t_min = float(input_data['t_min'])
+            self.hum_max = float(input_data['hum_max'])
+            self.hum_min = float(input_data['hum_min'])
+            self.hum_med = float(input_data['hum_med'])
+            self.rad_solar = float(input_data['rad_solar'])
+            self.wind_speed = float(input_data['wind_speed'])
+            self.height = float(input_data['height'])
+            self.latitude = float(input_data['latitude'])
             return True
         except:
             return False
