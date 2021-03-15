@@ -150,23 +150,22 @@ class Db_handler (object):
             cur = self.conn.cursor()
             cur.execute(sql_text, [(uuid_received)])
             db_client_id_table_uuid_assocaitions = cur.fetchall()[0][0]
-            print("The client_id in controller_uuid table is",
-                db_client_id_table_uuid_assocaitions)
+            # print("The client_id in controller_uuid table is",
+            #     db_client_id_table_uuid_assocaitions)
             # Second I get the id from the clients table:
             sql_text = """SELECT id  FROM clients WHERE "uuid"=?;"""
             cur = self.conn.cursor()
             cur.execute(sql_text, [(client_received)])
             db_client_id_table_clients = cur.fetchall()[0][0]
-            print("The client_id in client table is", db_client_id_table_clients)
+            # print("The client_id in client table is", db_client_id_table_clients)
             # Third get the name of the client:
             sql_text = """SELECT client_name FROM clients WHERE "uuid"=?;"""
             cur = self.conn.cursor()
             cur.execute(sql_text, [(client_received)])
             client_name_info = cur.fetchall()[0][0]
-            print("The client_name in client table is", client_name_info)
+            # print("The client_name in client table is", client_name_info)
         except:
             return False
-
 
         if (db_client_id_table_uuid_assocaitions == db_client_id_table_clients):
             self._add_popularity(client_name_info)
@@ -185,22 +184,27 @@ class Db_handler (object):
             cur = self.conn.cursor()
             cur.execute(sql_text)
             self.conn.commit()
+            cur.close()
         except:
             pass
         try:
             sql_text = """SELECT COUNT (*) FROM popularity WHERE client_name=?;"""
             cur = self.conn.cursor()
             cur.execute(sql_text, [client])
+            cur.close()
             return (cur.fetchall()[0][0])
         except:
             return "this client does not exist"
-             
+
     def _add_popularity(self, client_received):
         sql_text = '''INSERT INTO popularity(client_name, time_request) VALUES (?,?); '''
         cur = self.conn.cursor()
         cur.execute(sql_text, (client_received, str(time.ctime())))
         self.conn.commit()
-        
+
+    def __del__(self):
+        self.conn.close()
+
 # db_path = "db_production"
 # db = Db_handler(db_path)
 # db.create_db()
