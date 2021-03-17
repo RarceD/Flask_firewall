@@ -8,6 +8,17 @@ class Cropstages(object):
         self.seedtime = self._get_julian(datetime.datetime.now())
         self.stage_days = []
         self.depths = []
+        self.kc =0
+        self.depths_radicualar =0
+        self.depths_suelo =0
+        self.stone_percentage =0
+        self.precipitation_day =0
+        self.efective_precipitation_day =0
+        self.iHD_initial =0
+        self.radiocular_ =0
+        self.et0 =0
+        self.cred_rad =0
+        self.nap =0
 
     def load_file(self, file):
         try:
@@ -39,6 +50,7 @@ class Cropstages(object):
                 self.et0 = data['et0']
                 self.cred_rad = data['cred_rad']
                 self.nap = data['nap']
+                self.crop = data['crop']
                 return True
         except:
             return False
@@ -90,6 +102,9 @@ class Cropstages(object):
         first_day_year = datetime.datetime(date.year, 1, 1)
         julian_day = (date-first_day_year).days + 1
         return julian_day
+
+
+
 
 
 cropstages = Cropstages()
