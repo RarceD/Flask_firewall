@@ -1,6 +1,8 @@
 import datetime
 import json
 from datetime import timedelta
+from databaseinteractions import DatabaseInteractions
+import math
 
 
 class Cropstages(object):
@@ -8,17 +10,29 @@ class Cropstages(object):
         self.seedtime = self._get_julian(datetime.datetime.now())
         self.stage_days = []
         self.depths = []
-        self.kc =0
-        self.depths_radicualar =0
-        self.depths_suelo =0
-        self.stone_percentage =0
-        self.precipitation_day =0
-        self.efective_precipitation_day =0
-        self.iHD_initial =0
-        self.radiocular_ =0
-        self.et0 =0
-        self.cred_rad =0
-        self.nap =0
+        self.kc = 0
+        self.depths_radicualar = 0
+        self.depths_suelo = 0
+        self.stone_percentage = 0
+        self.precipitation_day = 0
+        self.efective_precipitation_day = 0
+        self.iHD_initial = 0
+        self.radiocular_ = 0
+        self.et0 = 0
+        self.cred_rad = 0
+        self.nap = 0
+        self.crop = "Girasol"
+        self.texture = "Arcilloso"
+        
+        self.fc = 0
+        self.wp = 0
+        self.ep  = 0
+               
+
+        self.efective_prec_percentage = 0  # porcentaje de precipitación efectivo
+        self.efective_riego_percentage = 0  # porcentaje de riego efectivo
+        self.precipitation = 0  # lluvia que cae, obtenido de las estaciones
+        self.irrigation = 12  # mm de riego
 
     def load_file(self, file):
         try:
@@ -51,7 +65,7 @@ class Cropstages(object):
                 self.cred_rad = data['cred_rad']
                 self.nap = data['nap']
                 self.crop = data['crop']
-                return True
+            return True
         except:
             return False
 
@@ -64,24 +78,35 @@ class Cropstages(object):
             str(self.depths_radicualar) + "\n"
         return data_inside
 
-    def solve(self):
+    def calc_eta(self):
+
         # The first eta is the first day etc.
-        eta = 0
         efective_precipitation = self.precipitation_day * \
             self.efective_precipitation_day/100
-        fc = 0  # i don't have the fc
-        water_balance_rad = self.iHD_initial / \
-            (100*fc*(1-self.stone_percentage)*1000*self.depths_radicualar[0])
-        wp = 0  # i don't have it and don't even know what it is.
-        pr = 0
+        # obtein the fc and wp from the database:
+        db = DatabaseInteractions()
+        crop_params = db.get_parameters_plot(self.texture)
+        self.fc, self.wp, self.ep = crop_params['fc'], crop_params['wp'], crop_params['ep']
+        crop_params = db.get_nap_parameters_crop(self.crop)
+        nap_a, nap_b, nap_c = crop_params['naps_abc'][0],  crop_params['naps_abc'][1],  crop_params['naps_abc'][2]
+        self.kc = crop_params['kcs_list']
+
+        etm = self.et0 * float(self.kc[0])
+        NAP = (1-nap_a)/(1+nap_b*math.exp(-nap_c * etm))
+
+        pr = 1
+        # water_balance_rad = self.iHD_initial / \
+        #     (100*self.fc*(1-self.stone_percentage)
+        #      * 1000*self.depths_radicualar[0])
+        water_balance_rad = 1
         cred_rad = 0
         eta_num = water_balance_rad+efective_precipitation + \
             self.precipitation_day+cred_rad * \
-            (wp*(1-self.stone_percentage)*pr*1000)
+            (self.wp*(1-self.stone_percentage)*pr*1000)
 
-        eta_den = (1-self.nap)/((1-self.stone_percentage)*(fc-wp)*pr*1000)
-        # The following ta
-        return eta_num/eta_den
+        eta_den = (1-self.nap)/((1-self.stone_percentage)
+                                * (self.fc-self.wp)*pr*1000)
+        self.eta = eta_num / eta_den
 
     def _calc_evo(self, stage, prev_evo):
         # TODO: Let's make any sense---
@@ -103,10 +128,45 @@ class Cropstages(object):
         julian_day = (date-first_day_year).days + 1
         return julian_day
 
+    def get_water_util(self, first_day):
 
+        # INPUTS:
+        radicular_depht = 1
+        radicular_balace_day = 21
+        radicular_balace_first_day = 3
+        water_util_num = 0
+        water_util_den = (self.fc*(1-self.stone_percentage))*1000*radicular_depht - \
+            (self.wp*(1-self.stone_percentage))*1000*radicular_depht
 
+        # It change if is the first day or not:
+        if first_day:
+            water_util_num = (radicular_balace_day - (self.wp(1-self.stone_percentage))
+                              * 1000*radicular_depht)*100
+        else:
+            water_util_num = (radicular_balace_first_day - (self.wp(1-self.stone_percentage))
+                              * 1000*radicular_depht)*100
 
+    def _calc_radicular_balance(self, first_day, HD, radicular_depht):
+        radicular_balance_first_stage = 0
+        radicular_balance = 0
+        radicular_balance_prev = 0
+        eta = self._cal_inputs()
+        inputs = 0
 
-cropstages = Cropstages()
-if (cropstages.load_file('data/cropstages.json')):
-    print(cropstages)
+        if first_day:
+            radicular_balance = HD / \
+                (100*self.fc*(1-self.stone_percentage)*1000*radicular_balance_first_stage)
+        else:
+            if (radicular_balance_prev + inputs - eta) > radicular_depht:
+                paradicular_balance = radicular_depht * \
+                    self.fc * (1-self.stone_percentage) * 100
+            else:
+                paradicular_balance = radicular_depht * \
+                    self.wp * (1-self.stone_percentage) * 100
+
+    def _cal_inputs(self):
+        pe = self.efective_prec_percentage * self.precipitation / 100
+        riego_neto = self.irrigation * (1-self.efective_riego_percentage)/100
+        radicular_growth = 0  # Es cero porque me sale de los cojones
+        inputs = pe + riego_neto + radicular_growth
+        return inputs

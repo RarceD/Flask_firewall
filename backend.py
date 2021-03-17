@@ -2,8 +2,9 @@ from flask import Flask, render_template, request
 from flask_mqtt import Mqtt
 from flask_cors import CORS
 from credential import *
-from apikey import Apikey
+from dB.apikey import Apikey
 from calculations.calculateEto import calculateEto
+from calculations.cropstages import Cropstages
 from dB.db_interactions import Db_handler
 from tools import *
 import json
@@ -333,7 +334,13 @@ def program():
 
 
 if __name__ == '__main__':
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=80)
+
+    cropstages = Cropstages()
+    cropstages.load_file('data/cropstages.json')
+    cropstages.calc_eta()
+    # print(cropstages)
+
+    # from waitress import serve
+    # serve(app, host="0.0.0.0", port=80)
     # app.run(host="0.0.0.0", port=80)
-    mqtt.init_app(app)
+    # mqtt.init_app(app)
