@@ -333,6 +333,20 @@ def program():
     else:
         return REQUEST_RESPONSE['CLIENT_ERROR'], 406
 
+@app.route('/api/sensors', methods=['GET'])
+def get_sensor_data():
+    #I have to received the following data: {"sensor_name":"sensor rarced wind"}
+    if request.data:
+        json_data = json.loads(request.data)
+        # print(json_data)
+        d = DatabaseInteractions()
+        sensor_data = d.get_dataloger_sensor(str(json_data["sensor_name"]))
+        if len(sensor_data) != 0:
+            return json.dumps(sensor_data) 
+        else:
+            return "There is no sensor with this name", 400
+    else:
+        return REQUEST_RESPONSE['JSON_ERROR'], 400
 
 if __name__ == '__main__':
 
@@ -340,9 +354,7 @@ if __name__ == '__main__':
     # cropstages.load_file('data/cropstages.json')
     # cropstages.calc_eta()
     # print(cropstages)
-    d = DatabaseInteractions()
-    print(d.get_dataloger_sensor("sensor rarced swind"))
-    # from waitress import serve
-    # serve(app, host="0.0.0.0", port=80)s
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=80)
     # app.run(host="0.0.0.0", port=80)
-    # mqtt.init_app(app)
+    mqtt.init_app(app)
