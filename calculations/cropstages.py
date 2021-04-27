@@ -27,7 +27,6 @@ class Cropstages(object):
         self.fc = 0
         self.wp = 0
         self.ep  = 0
-               
 
         self.efective_prec_percentage = 0  # porcentaje de precipitación efectivo
         self.efective_riego_percentage = 0  # porcentaje de riego efectivo
@@ -131,22 +130,22 @@ class Cropstages(object):
     def get_water_util(self, first_day):
 
         # INPUTS:
-        radicular_depht = 1
+        self.depths_radicualar = 1
         radicular_balace_day = 21
         radicular_balace_first_day = 3
         water_util_num = 0
-        water_util_den = (self.fc*(1-self.stone_percentage))*1000*radicular_depht - \
-            (self.wp*(1-self.stone_percentage))*1000*radicular_depht
+        water_util_den = (self.fc*(1-self.stone_percentage))*1000*self.depths_radicualar - \
+            (self.wp*(1-self.stone_percentage))*1000*self.depths_radicualar
 
         # It change if is the first day or not:
         if first_day:
             water_util_num = (radicular_balace_day - (self.wp(1-self.stone_percentage))
-                              * 1000*radicular_depht)*100
+                              * 1000*self.depths_radicualar)*100
         else:
             water_util_num = (radicular_balace_first_day - (self.wp(1-self.stone_percentage))
-                              * 1000*radicular_depht)*100
+                              * 1000*self.depths_radicualar)*100
 
-    def _calc_radicular_balance(self, first_day, HD, radicular_depht):
+    def _calc_radicular_balance(self, first_day, HD):
         radicular_balance_first_stage = 0
         radicular_balance = 0
         radicular_balance_prev = 0
@@ -157,11 +156,11 @@ class Cropstages(object):
             radicular_balance = HD / \
                 (100*self.fc*(1-self.stone_percentage)*1000*radicular_balance_first_stage)
         else:
-            if (radicular_balance_prev + inputs - eta) > radicular_depht:
-                paradicular_balance = radicular_depht * \
+            if (radicular_balance_prev + inputs - eta) > self.depths_radicualar:
+                paradicular_balance = self.depths_radicualar * \
                     self.fc * (1-self.stone_percentage) * 100
             else:
-                paradicular_balance = radicular_depht * \
+                paradicular_balance = self.depths_radicualar * \
                     self.wp * (1-self.stone_percentage) * 100
 
     def _cal_inputs(self):

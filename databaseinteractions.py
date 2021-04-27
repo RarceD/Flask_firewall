@@ -4,6 +4,7 @@ from credential import DB_DATA
 from dB.apikey import Apikey
 from dB.db_interactions import Db_handler
 from dB.client_data_priv import SQL_COMMANDS, AVAILABLE_CROPS, AVAILABLE_TEXTURES
+import datetime
 
 """
 Get data from other database in order to ger sensor data:
@@ -84,15 +85,46 @@ class DatabaseInteractions(object):
             self.number_rows = 0
             for m in self.mycursor:
                 parameters = {
-                    "fc":m[0],
-                    "wp":m[1],
-                    "ep":m[2]
+                    "fc": m[0],
+                    "wp": m[1],
+                    "ep": m[2]
                 }
             return parameters
         else:
             return "Not found the plot"
 
+    def get_dataloger_sensor(self, sensor_name):
+        # i can see all the sensor types:
+        """
+        sql_command = '''SELECT * FROM sensor_types;'''
+        self.mycursor.execute(sql_command)
+        for m in self.mycursor:
+            print("Sensor id: {} name: {}".format(m[0], m[1]))
+        """
+        # Get sensor from myself and get the id from db:
+        sensor_data = list()
+        try:
+            sql_command = '''SELECT * FROM sensors WHERE name="''' + \
+                str(sensor_name) + '''";'''
+            self.mycursor.execute(sql_command)
+            sensor_id = int()
+            for m in self.mycursor:
+                sensor_id = m[0]
+            # with the unique id I can get the last 10 data values to make decitions:
+            sql_command = "SELECT * FROM weather_historicals WHERE sensor_id=" + \
+                str(sensor_id) + ";"
+            self.mycursor.execute(sql_command)
+            ten_times = 1
+
+            for m in self.mycursor:
+                sensor_data.append(m[2])
+                # print(m)
+                if (ten_times > 10):
+                    break
+                ten_times += 1
+        except:
+            sensor_data = []
+        return sensor_data
+
     def __del__(self):
         self.mydb.close()
-
-

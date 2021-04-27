@@ -6,6 +6,7 @@ from dB.apikey import Apikey
 from calculations.calculateEto import calculateEto
 from calculations.cropstages import Cropstages
 from dB.db_interactions import Db_handler
+from databaseinteractions import DatabaseInteractions
 from tools import *
 import json
 import time
@@ -335,12 +336,13 @@ def program():
 
 if __name__ == '__main__':
 
-    cropstages = Cropstages()
-    cropstages.load_file('data/cropstages.json')
-    cropstages.calc_eta()
+    # cropstages = Cropstages()
+    # cropstages.load_file('data/cropstages.json')
+    # cropstages.calc_eta()
     # print(cropstages)
-
+    d = DatabaseInteractions()
+    print(d.get_dataloger_sensor("sensor rarced swind"))
     # from waitress import serve
-    # serve(app, host="0.0.0.0", port=80)
+    # serve(app, host="0.0.0.0", port=80)s
     # app.run(host="0.0.0.0", port=80)
     # mqtt.init_app(app)
