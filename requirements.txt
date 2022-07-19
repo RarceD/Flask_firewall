@@ -1,0 +1,4 @@
+Flask # Backend framework
+flask-mqtt # mqtt handler
+waitress # for development run
+sqlite3 # DB
